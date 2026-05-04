@@ -1,0 +1,693 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;background:#f0f2f5;}
+.wrap{display:flex;flex-direction:column;align-items:center;gap:20px;padding:20px 0 40px;}
+.tab-bar{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;max-width:380px;}
+.tab{padding:7px 11px;border-radius:22px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid #dde0e8;background:#fff;color:#8892a4;transition:all .2s;letter-spacing:.2px;}
+.tab.on{background:#FF6B35;color:#fff;border-color:#FF6B35;}
+.phone{width:340px;border-radius:44px;background:#fff;overflow:hidden;border:6px solid #1a1a2e;box-shadow:0 30px 80px rgba(0,0,0,.25),0 0 0 2px #2a2a4e;}
+.scr{display:none;flex-direction:column;background:#f8f9fc;min-height:680px;}
+.scr.on{display:flex;}
+.sbar{height:44px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid #f0f0f5;}
+.sbar-time{font-size:13px;font-weight:700;color:#1a1a2e;}
+.sbar-icons{display:flex;gap:5px;align-items:center;}
+.si{width:16px;height:10px;border-radius:2px;border:1.5px solid #1a1a2e;position:relative;}
+.si::after{content:'';position:absolute;left:1px;top:1px;right:1px;bottom:1px;background:#1a1a2e;border-radius:1px;width:75%;}
+.sbatt{width:4px;height:6px;border-radius:1px;background:#1a1a2e;}
+.swifi{width:12px;height:12px;}
+.scroll{flex:1;overflow-y:auto;scrollbar-width:none;}
+.scroll::-webkit-scrollbar{display:none;}
+.bnav{display:flex;background:#fff;border-top:1px solid #eef0f5;padding:10px 0 16px;}
+.bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;}
+.bni svg{width:22px;height:22px;}
+.bni span{font-size:9px;font-weight:600;color:#b0b8cc;letter-spacing:.3px;}
+.bni.on span{color:#FF6B35;}
+.bni.on svg path,.bni.on svg circle,.bni.on svg rect,.bni.on svg polyline,.bni.on svg line,.bni.on svg polygon{stroke:#FF6B35!important;}
+
+.hero-img{width:100%;height:200px;object-fit:cover;display:block;}
+.hero-placeholder{width:100%;height:200px;display:flex;align-items:center;justify-content:center;font-size:48px;background:linear-gradient(135deg,#1a1a4e,#2d1b6e,#0a2a5e);}
+
+.chip{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.3px;}
+.chip-green{background:#e8faf0;color:#16a34a;}
+.chip-red{background:#fef2f2;color:#dc2626;}
+.chip-amber{background:#fffbeb;color:#d97706;}
+.chip-blue{background:#eff6ff;color:#2563eb;}
+.chip-purple{background:#f5f3ff;color:#7c3aed;}
+.chip-orange{background:#fff7ed;color:#ea580c;}
+
+.pill-row{display:flex;gap:6px;padding:0 16px;flex-wrap:wrap;}
+
+.stat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0 16px;}
+.stat-card{background:#fff;border-radius:16px;padding:12px 14px;border:1px solid #eef0f5;}
+.stat-lbl{font-size:10px;color:#9aa0b0;font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;}
+.stat-val{font-size:15px;font-weight:700;color:#1a1a2e;}
+.stat-sub{font-size:10px;color:#b0b8cc;margin-top:2px;}
+
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 8px;}
+.sec-hdr h3{font-size:14px;font-weight:700;color:#1a1a2e;letter-spacing:-.2px;}
+.sec-hdr a{font-size:11px;color:#FF6B35;font-weight:600;cursor:pointer;}
+
+.place-scroll{display:flex;gap:12px;padding:0 16px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;}
+.place-scroll::-webkit-scrollbar{display:none;}
+.pcard{min-width:148px;border-radius:20px;overflow:hidden;background:#fff;border:1px solid #eef0f5;cursor:pointer;flex-shrink:0;}
+.pcard-img{width:100%;height:96px;object-fit:cover;display:block;}
+.pcard-img-ph{width:100%;height:96px;display:flex;align-items:center;justify-content:center;font-size:32px;}
+.pcard-body{padding:10px 10px 12px;}
+.pcard-name{font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:2px;}
+.pcard-dist{font-size:10px;color:#9aa0b0;font-weight:500;margin-bottom:5px;}
+.pcard-row{display:flex;align-items:center;justify-content:space-between;}
+.star-row{display:flex;align-items:center;gap:2px;}
+.star-val{font-size:10px;font-weight:700;color:#1a1a2e;}
+
+.cat-scroll{display:flex;gap:8px;padding:0 16px;overflow-x:auto;scrollbar-width:none;}
+.cat-scroll::-webkit-scrollbar{display:none;}
+.cat-pill{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;flex-shrink:0;}
+.cat-ico{width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;}
+.cat-lbl{font-size:10px;font-weight:600;color:#6b7280;}
+
+.search-bar{margin:12px 16px 0;background:#fff;border-radius:16px;border:1.5px solid #eef0f5;display:flex;align-items:center;gap:10px;padding:12px 14px;}
+.search-bar input{background:transparent;border:none;outline:none;color:#1a1a2e;font-size:14px;flex:1;font-family:inherit;}
+.search-bar input::placeholder{color:#b0b8cc;}
+
+.greeting-section{padding:16px 16px 0;}
+.greet-sub{font-size:12px;color:#9aa0b0;font-weight:500;}
+.greet-name{font-size:22px;font-weight:800;color:#1a1a2e;letter-spacing:-.5px;margin-top:2px;}
+.greet-loc{font-size:12px;color:#FF6B35;font-weight:600;display:flex;align-items:center;gap:4px;margin-top:3px;}
+
+.weather-card{margin:12px 16px 0;background:linear-gradient(135deg,#FF6B35,#FF8C42);border-radius:20px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;}
+.wc-left{}
+.wc-city{font-size:12px;color:rgba(255,255,255,.8);font-weight:600;}
+.wc-temp{font-size:28px;font-weight:800;color:#fff;letter-spacing:-1px;margin-top:2px;}
+.wc-desc{font-size:11px;color:rgba(255,255,255,.8);}
+.wc-right{text-align:right;}
+.wc-icon{font-size:36px;}
+.wc-feel{font-size:10px;color:rgba(255,255,255,.7);margin-top:4px;}
+
+.trip-modes{display:flex;gap:8px;padding:0 16px;}
+.tm{flex:1;background:#fff;border-radius:16px;border:2px solid #eef0f5;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:all .2s;}
+.tm.on{border-color:#FF6B35;background:#fff7f5;}
+.tm svg{width:24px;height:24px;}
+.tm span{font-size:10px;font-weight:700;color:#6b7280;letter-spacing:.2px;}
+.tm.on span{color:#FF6B35;}
+
+.detail-back-btn{position:absolute;top:16px;left:16px;width:36px;height:36px;background:rgba(255,255,255,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;}
+.detail-fav-btn{position:absolute;top:16px;right:16px;width:36px;height:36px;background:rgba(255,255,255,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;}
+.dh-wrap{position:relative;}
+
+.place-title-section{padding:14px 16px 10px;background:#fff;border-bottom:1px solid #f0f0f5;}
+.place-main-title{font-size:20px;font-weight:800;color:#1a1a2e;letter-spacing:-.4px;}
+.place-sub-loc{font-size:12px;color:#9aa0b0;font-weight:500;margin-top:3px;display:flex;align-items:center;gap:4px;}
+.place-rating-row{display:flex;align-items:center;gap:8px;margin-top:8px;}
+.rating-badge{background:#FFF3E0;color:#E65100;font-size:12px;font-weight:800;padding:4px 10px;border-radius:8px;}
+.review-count{font-size:11px;color:#9aa0b0;}
+
+.info-bar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:#eef0f5;margin:0 16px;border-radius:16px;overflow:hidden;}
+.ib-item{background:#fff;padding:12px;display:flex;flex-direction:column;gap:3px;}
+.ib-lbl{font-size:9px;color:#9aa0b0;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.ib-val{font-size:13px;font-weight:700;color:#1a1a2e;}
+.ib-val.green{color:#16a34a;}
+.ib-val.orange{color:#FF6B35;}
+.ib-val.red{color:#dc2626;}
+
+.about-section{padding:14px 16px;}
+.about-title{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px;}
+.about-text{font-size:12px;color:#6b7280;line-height:1.7;font-weight:400;}
+
+.tips-list{padding:0 16px;}
+.tip-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #f5f5f8;}
+.tip-item:last-child{border-bottom:none;}
+.tip-dot{width:8px;height:8px;border-radius:50%;background:#FF6B35;flex-shrink:0;margin-top:4px;}
+.tip-text{font-size:11px;color:#6b7280;line-height:1.6;}
+
+.yt-section{padding:0 16px;}
+.yt-card{display:flex;align-items:center;gap:10px;background:#fff;border-radius:14px;padding:10px 12px;border:1px solid #eef0f5;margin-bottom:8px;cursor:pointer;}
+.yt-thumb{width:60px;height:40px;border-radius:8px;object-fit:cover;background:#e0e0e0;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.yt-info{}
+.yt-title{font-size:11px;font-weight:700;color:#1a1a2e;}
+.yt-chan{font-size:10px;color:#9aa0b0;margin-top:2px;}
+.yt-views{font-size:10px;color:#FF6B35;font-weight:600;margin-top:1px;}
+.yt-play-btn{margin-left:auto;width:28px;height:28px;background:#ff0000;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+.book-footer{padding:12px 16px;background:#fff;border-top:1px solid #eef0f5;display:flex;gap:8px;}
+.btn-book{flex:1;background:#FF6B35;color:#fff;border:none;border-radius:14px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.2px;}
+.btn-save{width:46px;height:46px;border-radius:14px;background:#fff0eb;border:1.5px solid #ffd5c4;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+
+.itin-header{background:linear-gradient(135deg,#1a1a2e,#2d1b6e);padding:20px 16px 16px;}
+.itin-title{font-size:20px;font-weight:800;color:#fff;letter-spacing:-.4px;}
+.itin-sub{font-size:12px;color:rgba(255,255,255,.6);margin-top:3px;}
+.itin-stats{display:flex;gap:12px;margin-top:14px;}
+.itin-stat{background:rgba(255,255,255,.12);border-radius:12px;padding:8px 12px;text-align:center;}
+.itin-stat-val{font-size:14px;font-weight:800;color:#fff;}
+.itin-stat-lbl{font-size:9px;color:rgba(255,255,255,.6);margin-top:1px;text-transform:uppercase;letter-spacing:.5px;}
+
+.day-block{margin:10px 16px;background:#fff;border-radius:20px;border:1px solid #eef0f5;overflow:hidden;}
+.day-hdr{padding:12px 14px;background:#f8f9fc;border-bottom:1px solid #eef0f5;display:flex;align-items:center;gap:10px;}
+.day-num{width:40px;height:40px;border-radius:12px;background:#FF6B35;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;}
+.day-info{flex:1;}
+.day-title{font-size:13px;font-weight:700;color:#1a1a2e;}
+.day-meta{font-size:10px;color:#9aa0b0;margin-top:1px;}
+.day-cost{font-size:14px;font-weight:800;color:#FF6B35;}
+
+.stop-row{display:flex;gap:12px;padding:10px 14px;border-bottom:1px solid #f8f9fc;align-items:flex-start;}
+.stop-row:last-child{border-bottom:none;}
+.stop-timeline{display:flex;flex-direction:column;align-items:center;gap:0;flex-shrink:0;padding-top:2px;}
+.stop-circle{width:12px;height:12px;border-radius:50%;border:2px solid #FF6B35;background:#fff;flex-shrink:0;}
+.stop-circle.food{border-color:#10b981;}
+.stop-circle.travel{border-color:#3b82f6;}
+.stop-line{width:2px;flex:1;background:#f0f0f5;min-height:20px;}
+.stop-content{flex:1;}
+.stop-time{font-size:9px;color:#b0b8cc;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px;}
+.stop-name{font-size:12px;font-weight:700;color:#1a1a2e;}
+.stop-dur{font-size:10px;color:#9aa0b0;margin-top:1px;}
+.stop-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.stop-price{font-size:12px;font-weight:700;color:#16a34a;}
+.stop-img{width:44px;height:44px;border-radius:10px;object-fit:cover;border:1px solid #eef0f5;}
+.stop-img-ph{width:44px;height:44px;border-radius:10px;background:#f0f0f5;display:flex;align-items:center;justify-content:center;font-size:18px;}
+
+.route-header{background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);padding:20px 16px 16px;}
+.route-from-to{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.rt-city{background:rgba(255,255,255,.15);border-radius:10px;padding:8px 12px;flex:1;}
+.rt-city-lbl{font-size:9px;color:rgba(255,255,255,.6);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.rt-city-val{font-size:13px;font-weight:700;color:#fff;margin-top:2px;}
+.rt-arrow{color:rgba(255,255,255,.6);font-size:16px;}
+.route-stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.rst{background:rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;}
+.rst-val{font-size:16px;font-weight:800;color:#fff;}
+.rst-lbl{font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
+
+.slider-card{margin:10px 16px;background:#fff;border-radius:16px;border:1px solid #eef0f5;padding:14px 16px;}
+.sl-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.sl-row:last-child{margin-bottom:0;}
+.sl-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sl-info{flex:1;}
+.sl-label{font-size:11px;font-weight:700;color:#1a1a2e;margin-bottom:4px;}
+.sl-sub{font-size:10px;color:#9aa0b0;}
+.sl-input{flex:1;}
+.sl-val{font-size:12px;font-weight:700;color:#FF6B35;min-width:52px;text-align:right;}
+input[type=range]{-webkit-appearance:none;height:4px;border-radius:2px;background:#eef0f5;outline:none;cursor:pointer;width:100%;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#FF6B35;cursor:pointer;}
+
+.result-summary{margin:0 16px;background:#fff;border-radius:16px;border:1px solid #eef0f5;overflow:hidden;}
+.rs-header{padding:12px 14px;background:#fff7f5;border-bottom:1px solid #ffe5d4;display:flex;align-items:center;gap:8px;}
+.rs-header-title{font-size:13px;font-weight:700;color:#FF6B35;}
+.rs-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:#eef0f5;}
+.rs-cell{background:#fff;padding:12px;text-align:center;}
+.rs-val{font-size:17px;font-weight:800;color:#1a1a2e;}
+.rs-lbl{font-size:9px;color:#9aa0b0;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
+
+.waypoints{margin:10px 16px 0;background:#fff;border-radius:16px;border:1px solid #eef0f5;overflow:hidden;}
+.wp-hdr{padding:12px 14px;border-bottom:1px solid #f0f0f5;font-size:12px;font-weight:700;color:#1a1a2e;display:flex;align-items:center;gap:6px;}
+.wp-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #f8f9fc;}
+.wp-row:last-child{border-bottom:none;}
+.wp-img{width:44px;height:44px;border-radius:10px;object-fit:cover;flex-shrink:0;}
+.wp-img-ph{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.wp-info{flex:1;}
+.wp-name{font-size:12px;font-weight:700;color:#1a1a2e;}
+.wp-dist{font-size:10px;color:#9aa0b0;margin-top:2px;}
+.wp-det{font-size:10px;color:#6b7280;margin-top:1px;}
+.wp-add-btn{background:#fff0eb;color:#FF6B35;border:1.5px solid #ffd5c4;border-radius:10px;padding:6px 10px;font-size:10px;font-weight:700;cursor:pointer;}
+
+.budget-hero{margin:12px 16px 0;background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:20px;padding:18px;}
+.bh-lbl{font-size:10px;color:rgba(255,255,255,.6);font-weight:700;text-transform:uppercase;letter-spacing:.8px;}
+.bh-amt{font-size:32px;font-weight:800;color:#fff;letter-spacing:-1px;margin-top:4px;}
+.bh-sub{font-size:11px;color:rgba(255,255,255,.5);margin-top:3px;}
+.bh-bar{display:flex;height:8px;border-radius:4px;overflow:hidden;gap:2px;margin-top:14px;}
+.bb{border-radius:4px;}
+.bh-legend{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;}
+.bl-item{display:flex;align-items:center;gap:4px;font-size:9px;color:rgba(255,255,255,.6);font-weight:600;}
+.bl-dot{width:8px;height:8px;border-radius:2px;}
+
+.cost-list{padding:0 16px;display:flex;flex-direction:column;gap:8px;margin-top:10px;}
+.cost-item{background:#fff;border-radius:16px;border:1px solid #eef0f5;padding:12px 14px;display:flex;align-items:center;gap:12px;}
+.cost-ico{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.cost-info{flex:1;}
+.cost-cat{font-size:13px;font-weight:700;color:#1a1a2e;}
+.cost-det{font-size:10px;color:#9aa0b0;margin-top:2px;}
+.cost-amt{font-size:15px;font-weight:800;color:#1a1a2e;}
+
+.alert-card{margin:10px 16px 0;background:#fff5f5;border:1.5px solid #fecaca;border-radius:16px;padding:12px 14px;display:flex;gap:10px;}
+.alert-ico{width:32px;height:32px;border-radius:10px;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.alert-title{font-size:12px;font-weight:700;color:#dc2626;margin-bottom:3px;}
+.alert-text{font-size:11px;color:#9a3535;line-height:1.6;}
+
+.map-preview{margin:0 16px;border-radius:16px;overflow:hidden;height:110px;background:linear-gradient(135deg,#e8f5e9,#c8e6c9);display:flex;align-items:center;justify-content:center;border:1px solid #a5d6a7;position:relative;}
+.map-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;}
+.map-pin-row{display:flex;align-items:center;gap:8px;}
+.map-dot-from{width:10px;height:10px;border-radius:50%;background:#FF6B35;border:2px solid #fff;}
+.map-dot-to{width:10px;height:10px;border-radius:50%;background:#16a34a;border:2px solid #fff;}
+.map-line{flex:1;height:2px;background:linear-gradient(90deg,#FF6B35,#16a34a);border-radius:1px;width:80px;}
+.map-label{font-size:10px;color:#2d6a2d;font-weight:700;}
+.map-gmaps-badge{background:#fff;border-radius:8px;padding:3px 8px;font-size:9px;font-weight:700;color:#4285F4;border:1px solid #e8f0fe;display:flex;align-items:center;gap:3px;}
+</style>
+
+<h2 class="sr-only">Triply travel app prototype with 6 interactive screens: splash, home, place detail, itinerary, route planner, and cost estimator.</h2>
+
+<div class="wrap">
+<div class="tab-bar">
+  <div class="tab on" onclick="showScr('splash',this)">Launch</div>
+  <div class="tab" onclick="showScr('home',this)">Home</div>
+  <div class="tab" onclick="showScr('detail',this)">Place</div>
+  <div class="tab" onclick="showScr('itin',this)">Itinerary</div>
+  <div class="tab" onclick="showScr('route',this)">Route</div>
+  <div class="tab" onclick="showScr('cost',this)">Cost</div>
+</div>
+
+<div class="phone">
+
+<div class="scr on" id="splash" style="background:linear-gradient(160deg,#FF6B35 0%,#FF8C42 40%,#1a1a2e 100%);align-items:center;justify-content:center;gap:0;">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 32px;">
+    <div style="width:80px;height:80px;border-radius:26px;background:#fff;display:flex;align-items:center;justify-content:center;margin-bottom:24px;">
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M22 4C13.163 4 6 11.163 6 20c0 11.25 16 24 16 24s16-12.75 16-24c0-8.837-7.163-16-16-16z" fill="#FF6B35"/><circle cx="22" cy="20" r="5" fill="#fff"/><path d="M8 36l4-8 6 4 8-6 6 4 4-6" stroke="#FF6B35" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+    <div style="font-size:32px;font-weight:900;color:#fff;letter-spacing:-1px;">Triply</div>
+    <div style="font-size:14px;color:rgba(255,255,255,.7);margin-top:6px;text-align:center;line-height:1.6;">Your smart all-in-one travel companion. Plan. Explore. Never get lost.</div>
+    <div style="display:flex;gap:10px;margin-top:32px;flex-direction:column;width:100%;">
+      <button onclick="showScr('home',null)" style="width:100%;padding:16px;border-radius:18px;background:#fff;color:#FF6B35;font-size:15px;font-weight:800;border:none;cursor:pointer;letter-spacing:.3px;">Get Started — It's Free</button>
+      <button style="width:100%;padding:15px;border-radius:18px;background:rgba(255,255,255,.15);color:#fff;font-size:14px;font-weight:700;border:2px solid rgba(255,255,255,.3);cursor:pointer;">Sign In to Your Account</button>
+    </div>
+    <div style="margin-top:24px;font-size:10px;color:rgba(255,255,255,.4);text-align:center;">Used by 2M+ travellers worldwide</div>
+  </div>
+  <div style="display:flex;gap:24px;padding:0 0 36px;justify-content:center;">
+    <div style="text-align:center;"><div style="font-size:16px;font-weight:800;color:#fff;">50K+</div><div style="font-size:9px;color:rgba(255,255,255,.5);">PLACES</div></div>
+    <div style="text-align:center;"><div style="font-size:16px;font-weight:800;color:#fff;">120+</div><div style="font-size:9px;color:rgba(255,255,255,.5);">COUNTRIES</div></div>
+    <div style="text-align:center;"><div style="font-size:16px;font-weight:800;color:#fff;">4.9★</div><div style="font-size:9px;color:rgba(255,255,255,.5);">RATING</div></div>
+  </div>
+</div>
+
+<div class="scr" id="home">
+  <div class="sbar"><span class="sbar-time">9:41</span><div class="sbar-icons"><svg class="swifi" viewBox="0 0 16 16" fill="none"><path d="M1 5c1.8-1.8 4.2-3 7-3s5.2 1.2 7 3" stroke="#1a1a2e" stroke-width="1.5" stroke-linecap="round"/><path d="M4 8.5c1-1 2.4-1.5 4-1.5s3 .5 4 1.5" stroke="#1a1a2e" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="12" r="1.2" fill="#1a1a2e"/></svg><div class="si"></div><div class="sbatt"></div></div></div>
+  <div class="scroll">
+    <div class="greeting-section">
+      <div class="greet-sub">Good Morning ☀️</div>
+      <div class="greet-name">Hello, Ravi!</div>
+      <div class="greet-loc"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 2C5.2 2 3 4.2 3 7c0 4.5 5 9 5 9s5-4.5 5-9c0-2.8-2.2-5-5-5z" stroke="#FF6B35" stroke-width="1.5"/><circle cx="8" cy="7" r="1.5" fill="#FF6B35"/></svg>Hyderabad, Telangana</div>
+    </div>
+    <div class="weather-card">
+      <div class="wc-left"><div class="wc-city">Hyderabad, IN</div><div class="wc-temp">33°C</div><div class="wc-desc">Partly Cloudy · Humid</div></div>
+      <div class="wc-right"><div style="font-size:38px;">⛅</div><div class="wc-feel">Feels like 36°C</div><div style="font-size:10px;color:rgba(255,255,255,.7);margin-top:2px;">UV Index: High</div></div>
+    </div>
+    <div class="search-bar">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="#b0b8cc" stroke-width="2"/><path d="M13.5 13.5l3 3" stroke="#b0b8cc" stroke-width="2" stroke-linecap="round"/></svg>
+      <input placeholder="Search cities, forts, temples, beaches…" />
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M10 3v14M10 3l3 3M10 3l-3 3" stroke="#FF6B35" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+    <div class="sec-hdr" style="padding-top:14px;"><h3>Plan your trip</h3></div>
+    <div class="trip-modes">
+      <div class="tm on">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#FF6B35" stroke-width="2"/><path d="M12 7v5l3 3" stroke="#FF6B35" stroke-width="2" stroke-linecap="round"/></svg>
+        <span>Explore</span>
+      </div>
+      <div class="tm">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 12h18M3 12l4-4M3 12l4 4" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/><circle cx="17" cy="17" r="2" stroke="#6b7280" stroke-width="1.5"/><circle cx="7" cy="17" r="2" stroke="#6b7280" stroke-width="1.5"/><rect x="5" y="8" width="14" height="8" rx="2" stroke="#6b7280" stroke-width="1.5"/></svg>
+        <span>Road Trip</span>
+      </div>
+      <div class="tm">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M22 16.5A10 10 0 0 0 7 4" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/><path d="M2 7.5A10 10 0 0 0 17 20" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/><path d="M5 3l2 4.5-4.5 2" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>International</span>
+      </div>
+    </div>
+    <div class="sec-hdr"><h3>Categories</h3><a>All</a></div>
+    <div class="cat-scroll">
+      <div class="cat-pill"><div class="cat-ico" style="background:#fff0eb;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 21l5-10 5 3 5-8 3 5" stroke="#FF6B35" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 5c0-1.1-.9-2-2-2S8 3.9 8 5c0 2 4 5 4 5s4-3 4-5c0-1.1-.9-2-2-2s-2 .9-2 2z" stroke="#FF6B35" stroke-width="2"/></svg></div><span>Heritage</span></div>
+      <div class="cat-pill"><div class="cat-ico" style="background:#f0fdf4;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.5 2 3 6.5 3 11c0 5.5 7 13 9 13s9-7.5 9-13c0-4.5-3.5-9-9-9z" stroke="#16a34a" stroke-width="2"/><circle cx="12" cy="11" r="2.5" fill="#16a34a"/></svg></div><span>Nature</span></div>
+      <div class="cat-pill"><div class="cat-ico" style="background:#eff6ff;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#2563eb" stroke-width="2"/><path d="M9 22V12h6v10" stroke="#2563eb" stroke-width="2"/></svg></div><span>Temples</span></div>
+      <div class="cat-pill"><div class="cat-ico" style="background:#fdf4ff;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M18 8h1a4 4 0 0 1 0 8h-1" stroke="#7c3aed" stroke-width="2" stroke-linecap="round"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" stroke="#7c3aed" stroke-width="2"/><path d="M6 1v3M10 1v3M14 1v3" stroke="#7c3aed" stroke-width="2" stroke-linecap="round"/></svg></div><span>Food</span></div>
+      <div class="cat-pill"><div class="cat-ico" style="background:#fff7ed;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="2" y="7" width="20" height="14" rx="2" stroke="#ea580c" stroke-width="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" stroke="#ea580c" stroke-width="2"/><line x1="12" y1="12" x2="12" y2="16" stroke="#ea580c" stroke-width="2" stroke-linecap="round"/><line x1="10" y1="14" x2="14" y2="14" stroke="#ea580c" stroke-width="2" stroke-linecap="round"/></svg></div><span>Adventure</span></div>
+      <div class="cat-pill"><div class="cat-ico" style="background:#f0fdf4;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4.5 8-12a8 8 0 0 0-16 0c0 7.5 8 12 8 12z" stroke="#16a34a" stroke-width="2"/><circle cx="12" cy="10" r="3" stroke="#16a34a" stroke-width="2"/></svg></div><span>Scenic</span></div>
+    </div>
+    <div class="sec-hdr"><h3>Top places near you</h3><a>See all</a></div>
+    <div class="place-scroll">
+      <div class="pcard" onclick="showScr('detail',null)">
+        <img class="pcard-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Golconda_fort_Hyderabad.jpg/400px-Golconda_fort_Hyderabad.jpg" alt="Golconda Fort" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="pcard-img-ph" style="display:none;background:linear-gradient(135deg,#1a1a4e,#2d1b6e);">🏯</div>
+        <div class="pcard-body">
+          <div class="pcard-name">Golconda Fort</div>
+          <div class="pcard-dist">📍 11.2 km away · 28 min</div>
+          <div class="pcard-row">
+            <div class="star-row"><svg width="11" height="11" viewBox="0 0 12 12" fill="#f59e0b"><polygon points="6,1 7.5,4.5 11,5 8.5,7.5 9,11 6,9 3,11 3.5,7.5 1,5 4.5,4.5"/></svg><span class="star-val">4.6</span></div>
+            <span class="chip chip-green" style="font-size:9px;padding:3px 7px;">Open</span>
+          </div>
+        </div>
+      </div>
+      <div class="pcard" onclick="showScr('detail',null)">
+        <img class="pcard-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Charminar_Hyderabad.jpg/400px-Charminar_Hyderabad.jpg" alt="Charminar" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="pcard-img-ph" style="display:none;background:linear-gradient(135deg,#1e3040,#0a2a3e);">🕌</div>
+        <div class="pcard-body">
+          <div class="pcard-name">Charminar</div>
+          <div class="pcard-dist">📍 8.4 km away · 22 min</div>
+          <div class="pcard-row">
+            <div class="star-row"><svg width="11" height="11" viewBox="0 0 12 12" fill="#f59e0b"><polygon points="6,1 7.5,4.5 11,5 8.5,7.5 9,11 6,9 3,11 3.5,7.5 1,5 4.5,4.5"/></svg><span class="star-val">4.8</span></div>
+            <span class="chip chip-green" style="font-size:9px;padding:3px 7px;">Open</span>
+          </div>
+        </div>
+      </div>
+      <div class="pcard" onclick="showScr('detail',null)">
+        <img class="pcard-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Hussain_Sagar_lake.jpg/400px-Hussain_Sagar_lake.jpg" alt="Hussain Sagar" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="pcard-img-ph" style="display:none;background:linear-gradient(135deg,#0a1e3e,#0a2a5e);">🌊</div>
+        <div class="pcard-body">
+          <div class="pcard-name">Hussain Sagar</div>
+          <div class="pcard-dist">📍 5.1 km away · 14 min</div>
+          <div class="pcard-row">
+            <div class="star-row"><svg width="11" height="11" viewBox="0 0 12 12" fill="#f59e0b"><polygon points="6,1 7.5,4.5 11,5 8.5,7.5 9,11 6,9 3,11 3.5,7.5 1,5 4.5,4.5"/></svg><span class="star-val">4.3</span></div>
+            <span class="chip chip-amber" style="font-size:9px;padding:3px 7px;">Mon Closed</span>
+          </div>
+        </div>
+      </div>
+      <div class="pcard">
+        <img class="pcard-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Ramoji_Film_City_1.jpg/400px-Ramoji_Film_City_1.jpg" alt="Ramoji Film City" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="pcard-img-ph" style="display:none;background:linear-gradient(135deg,#2e1a0a,#4a2a0a);">🎬</div>
+        <div class="pcard-body">
+          <div class="pcard-name">Ramoji Film City</div>
+          <div class="pcard-dist">📍 30.6 km away · 52 min</div>
+          <div class="pcard-row">
+            <div class="star-row"><svg width="11" height="11" viewBox="0 0 12 12" fill="#f59e0b"><polygon points="6,1 7.5,4.5 11,5 8.5,7.5 9,11 6,9 3,11 3.5,7.5 1,5 4.5,4.5"/></svg><span class="star-val">4.5</span></div>
+            <span class="chip chip-green" style="font-size:9px;padding:3px 7px;">Open</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="height:16px;"></div>
+  </div>
+  <div class="bnav">
+    <div class="bni on"><svg viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#FF6B35" stroke-width="2"/><path d="M9 22V12h6v10" stroke="#FF6B35" stroke-width="2"/></svg><span>Home</span></div>
+    <div class="bni" onclick="showScr('itin',null)"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" stroke="#b0b8cc" stroke-width="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke="#b0b8cc" stroke-width="2" stroke-linecap="round"/></svg><span>Itinerary</span></div>
+    <div class="bni" onclick="showScr('route',null)"><svg viewBox="0 0 24 24" fill="none"><circle cx="5" cy="6" r="2" stroke="#b0b8cc" stroke-width="2"/><circle cx="19" cy="18" r="2" stroke="#b0b8cc" stroke-width="2"/><path d="M7 6h5a3 3 0 0 1 3 3v6a3 3 0 0 0 3 3" stroke="#b0b8cc" stroke-width="2"/></svg><span>Route</span></div>
+    <div class="bni" onclick="showScr('cost',null)"><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" stroke="#b0b8cc" stroke-width="2"/><path d="M2 10h20" stroke="#b0b8cc" stroke-width="2"/><circle cx="7" cy="15" r="1.5" stroke="#b0b8cc" stroke-width="1.5"/></svg><span>Costs</span></div>
+    <div class="bni"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#b0b8cc" stroke-width="2"/><path d="M5 20a7 7 0 0 1 14 0" stroke="#b0b8cc" stroke-width="2" stroke-linecap="round"/></svg><span>Profile</span></div>
+  </div>
+</div>
+
+<div class="scr" id="detail">
+  <div class="sbar"><span class="sbar-time">9:41</span><div class="sbar-icons"><div class="si"></div><div class="sbatt"></div></div></div>
+  <div class="scroll">
+    <div class="dh-wrap">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Golconda_fort_Hyderabad.jpg/600px-Golconda_fort_Hyderabad.jpg" alt="Golconda Fort" style="width:100%;height:210px;object-fit:cover;display:block;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div style="display:none;width:100%;height:210px;background:linear-gradient(135deg,#1a1a4e,#2d1b6e,#1a2a5e);align-items:center;justify-content:center;font-size:56px;">🏯</div>
+      <button class="detail-back-btn" onclick="showScr('home',null)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="#1a1a2e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="detail-fav-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="#1a1a2e" stroke-width="2"/></svg>
+      </button>
+    </div>
+    <div class="place-title-section">
+      <div class="place-main-title">Golconda Fort</div>
+      <div class="place-sub-loc"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 2C5.2 2 3 4.2 3 7c0 4.5 5 9 5 9s5-4.5 5-9c0-2.8-2.2-5-5-5z" stroke="#9aa0b0" stroke-width="1.5"/><circle cx="8" cy="7" r="1.5" fill="#9aa0b0"/></svg>Ibrahim Bagh, Hyderabad · 11.2 km away</div>
+      <div class="place-rating-row">
+        <div class="rating-badge">★ 4.6</div>
+        <span class="review-count">18,432 reviews on Google Maps</span>
+        <span class="chip chip-green" style="margin-left:auto;">Open Now</span>
+      </div>
+    </div>
+    <div class="pill-row" style="padding:10px 16px;">
+      <span class="chip chip-amber">⏰ 9 AM – 5:30 PM</span>
+      <span class="chip chip-blue">⌛ ~3 hours</span>
+      <span class="chip chip-purple">🏛️ 16th Century</span>
+      <span class="chip chip-red">🚫 Closed Fri AM</span>
+    </div>
+    <div class="info-bar">
+      <div class="ib-item"><div class="ib-lbl">Indian Entry</div><div class="ib-val green">₹ 35</div></div>
+      <div class="ib-item"><div class="ib-lbl">Foreigner Entry</div><div class="ib-val orange">₹ 500</div></div>
+      <div class="ib-item"><div class="ib-lbl">Light Show</div><div class="ib-val">₹ 130 / person</div></div>
+      <div class="ib-item"><div class="ib-lbl">Parking</div><div class="ib-val green">Free</div></div>
+    </div>
+    <div class="about-section">
+      <div class="about-title">About this place</div>
+      <div class="about-text">Golconda Fort is a majestic 16th-century citadel built by the Qutb Shahi dynasty. Spread across 11 km, it features 87 bastions, 8 gateways, and a breathtaking acoustic clapping system at the entrance gate — if you clap at the gate, the sound echoes to the top of the fort. The fort offers panoramic 360° views of Hyderabad from the summit. The Sound and Light Show every evening narrates its dramatic history of wars and dynasties.</div>
+    </div>
+    <div style="padding:0 16px 8px;"><div class="about-title">Traveller Tips</div></div>
+    <div class="tips-list">
+      <div class="tip-item"><div class="tip-dot"></div><div class="tip-text">Arrive before 9 AM on weekdays to avoid heavy crowds. Weekends can get very crowded by 10 AM.</div></div>
+      <div class="tip-item"><div class="tip-dot"></div><div class="tip-text">Buy tickets only from the ASI (Archaeological Survey of India) counter — never from touts outside. Official price is ₹35 for Indians.</div></div>
+      <div class="tip-item"><div class="tip-dot"></div><div class="tip-text">Wear comfortable shoes — there are 380 steps to the top. Carry water, especially in summer (Apr–Jun can reach 42°C).</div></div>
+      <div class="tip-item"><div class="tip-dot"></div><div class="tip-text">Best months: October to February. Avoid national holidays when the fort is extremely crowded.</div></div>
+    </div>
+    <div class="sec-hdr" style="padding-top:14px;"><h3>Watch before you go</h3></div>
+    <div class="yt-section">
+      <div class="yt-card">
+        <div class="yt-thumb" style="background:#1a0010;"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z" fill="#ff0000"/></svg></div>
+        <div class="yt-info"><div class="yt-title">Golconda Fort Complete Guide 2024</div><div class="yt-chan">Travel with Harish</div><div class="yt-views">2.4M views</div></div>
+        <div class="yt-play-btn"><svg width="10" height="10" viewBox="0 0 12 12"><path d="M2 2l8 4-8 4V2z" fill="#fff"/></svg></div>
+      </div>
+      <div class="yt-card">
+        <div class="yt-thumb" style="background:#001a10;"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z" fill="#ff0000"/></svg></div>
+        <div class="yt-info"><div class="yt-title">Hidden Secrets of Golconda Fort</div><div class="yt-chan">Telugu Traveller</div><div class="yt-views">890K views</div></div>
+        <div class="yt-play-btn"><svg width="10" height="10" viewBox="0 0 12 12"><path d="M2 2l8 4-8 4V2z" fill="#fff"/></svg></div>
+      </div>
+    </div>
+    <div style="height:12px;"></div>
+    <div class="book-footer">
+      <button class="btn-book">Book Entry Ticket — ₹35</button>
+      <button class="btn-save"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="#FF6B35" stroke-width="2"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<div class="scr" id="itin">
+  <div class="itin-header">
+    <div class="itin-title">My Itinerary</div>
+    <div class="itin-sub">Hyderabad · Oct 12–14, 2025</div>
+    <div class="itin-stats">
+      <div class="itin-stat"><div class="itin-stat-val">3</div><div class="itin-stat-lbl">Days</div></div>
+      <div class="itin-stat"><div class="itin-stat-val">9</div><div class="itin-stat-lbl">Places</div></div>
+      <div class="itin-stat"><div class="itin-stat-val">₹4,850</div><div class="itin-stat-lbl">Total Est.</div></div>
+      <div class="itin-stat"><div class="itin-stat-val">82 km</div><div class="itin-stat-lbl">Total dist.</div></div>
+    </div>
+  </div>
+  <div class="scroll">
+    <div class="day-block">
+      <div class="day-hdr">
+        <div class="day-num">D1</div>
+        <div class="day-info"><div class="day-title">Oct 12 — Heritage Trail</div><div class="day-meta">3 stops · 26.4 km · ~7 hrs</div></div>
+        <div class="day-cost">₹680</div>
+      </div>
+      <div class="stop-row">
+        <div class="stop-timeline"><div class="stop-circle"></div><div class="stop-line"></div></div>
+        <div class="stop-content"><div class="stop-time">8:00 AM — 11:00 AM</div><div class="stop-name">Golconda Fort</div><div class="stop-dur">3 hrs · 11.2 km from hotel</div></div>
+        <div class="stop-right">
+          <div class="stop-price">₹35</div>
+          <img class="stop-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Golconda_fort_Hyderabad.jpg/100px-Golconda_fort_Hyderabad.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="stop-img-ph" style="display:none;">🏯</div>
+        </div>
+      </div>
+      <div class="stop-row">
+        <div class="stop-timeline"><div class="stop-circle food"></div><div class="stop-line"></div></div>
+        <div class="stop-content"><div class="stop-time">12:00 PM — 1:00 PM</div><div class="stop-name">Bawarchi Restaurant</div><div class="stop-dur">Lunch · 2.3 km from fort</div></div>
+        <div class="stop-right">
+          <div class="stop-price">~₹300</div>
+          <div class="stop-img-ph" style="background:#fff7ed;">🍖</div>
+        </div>
+      </div>
+      <div class="stop-row">
+        <div class="stop-timeline"><div class="stop-circle"></div></div>
+        <div class="stop-content"><div class="stop-time">2:00 PM — 4:30 PM</div><div class="stop-name">Charminar</div><div class="stop-dur">2.5 hrs · 8.4 km from lunch</div></div>
+        <div class="stop-right">
+          <div class="stop-price">₹25</div>
+          <img class="stop-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Charminar_Hyderabad.jpg/100px-Charminar_Hyderabad.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="stop-img-ph" style="display:none;">🕌</div>
+        </div>
+      </div>
+    </div>
+    <div class="day-block">
+      <div class="day-hdr">
+        <div class="day-num" style="background:#7c3aed;">D2</div>
+        <div class="day-info"><div class="day-title">Oct 13 — Nature & Museums</div><div class="day-meta">4 stops · 28.6 km · ~8 hrs</div></div>
+        <div class="day-cost">₹820</div>
+      </div>
+      <div class="stop-row">
+        <div class="stop-timeline"><div class="stop-circle travel"></div><div class="stop-line"></div></div>
+        <div class="stop-content"><div class="stop-time">6:30 AM — 8:00 AM</div><div class="stop-name">KBR National Park</div><div class="stop-dur">Morning walk · 4.2 km away</div></div>
+        <div class="stop-right"><div class="stop-price">Free</div><div class="stop-img-ph" style="background:#f0fdf4;">🌿</div></div>
+      </div>
+      <div class="stop-row">
+        <div class="stop-timeline"><div class="stop-circle"></div><div class="stop-line"></div></div>
+        <div class="stop-content"><div class="stop-time">10:00 AM — 1:00 PM</div><div class="stop-name">Salar Jung Museum</div><div class="stop-dur">3 hrs · World's largest 1-person collection</div></div>
+        <div class="stop-right">
+          <div class="stop-price">₹50</div>
+          <img class="stop-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Salar_Jung_Museum.jpg/100px-Salar_Jung_Museum.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="stop-img-ph" style="display:none;">🏛️</div>
+        </div>
+      </div>
+    </div>
+    <div style="height:12px;"></div>
+  </div>
+  <div class="bnav">
+    <div class="bni" onclick="showScr('home',null)"><svg viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#b0b8cc" stroke-width="2"/><path d="M9 22V12h6v10" stroke="#b0b8cc" stroke-width="2"/></svg><span>Home</span></div>
+    <div class="bni on"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" stroke="#FF6B35" stroke-width="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke="#FF6B35" stroke-width="2" stroke-linecap="round"/></svg><span>Itinerary</span></div>
+    <div class="bni" onclick="showScr('route',null)"><svg viewBox="0 0 24 24" fill="none"><circle cx="5" cy="6" r="2" stroke="#b0b8cc" stroke-width="2"/><circle cx="19" cy="18" r="2" stroke="#b0b8cc" stroke-width="2"/><path d="M7 6h5a3 3 0 0 1 3 3v6a3 3 0 0 0 3 3" stroke="#b0b8cc" stroke-width="2"/></svg><span>Route</span></div>
+    <div class="bni" onclick="showScr('cost',null)"><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" stroke="#b0b8cc" stroke-width="2"/><path d="M2 10h20" stroke="#b0b8cc" stroke-width="2"/></svg><span>Costs</span></div>
+    <div class="bni"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#b0b8cc" stroke-width="2"/><path d="M5 20a7 7 0 0 1 14 0" stroke="#b0b8cc" stroke-width="2" stroke-linecap="round"/></svg><span>Profile</span></div>
+  </div>
+</div>
+
+<div class="scr" id="route">
+  <div class="route-header">
+    <div class="route-from-to">
+      <div class="rt-city"><div class="rt-city-lbl">From</div><div class="rt-city-val">Jangaon</div></div>
+      <div class="rt-arrow">→</div>
+      <div class="rt-city"><div class="rt-city-lbl">To</div><div class="rt-city-val">Hyderabad</div></div>
+    </div>
+    <div class="route-stats-row">
+      <div class="rst"><div class="rst-val">127.4 km</div><div class="rst-lbl">Total distance</div></div>
+      <div class="rst"><div class="rst-val" id="rv-time">2h 42m</div><div class="rst-lbl">Drive time</div></div>
+      <div class="rst"><div class="rst-val" id="rv-litres">7.1 L</div><div class="rst-lbl">Fuel needed</div></div>
+      <div class="rst"><div class="rst-val" id="rv-cost">₹729</div><div class="rst-lbl">Fuel cost</div></div>
+    </div>
+  </div>
+  <div class="scroll">
+    <div class="map-preview">
+      <div class="map-overlay">
+        <div class="map-pin-row"><div class="map-dot-from"></div><div class="map-line"></div><div class="map-dot-to"></div></div>
+        <div class="map-label" style="margin-top:6px;">Jangaon → NH163 → Hyderabad</div>
+        <div class="map-gmaps-badge"><svg width="10" height="10" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#4285F4"/><path d="M10 5a5 5 0 0 1 5 5c0 3.5-5 10-5 10S5 13.5 5 10a5 5 0 0 1 5-5z" fill="#fff"/></svg>Google Maps Route</div>
+      </div>
+    </div>
+    <div class="slider-card">
+      <div class="sl-row">
+        <div class="sl-icon" style="background:#fff7ed;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="10" width="18" height="8" rx="2" stroke="#ea580c" stroke-width="2"/><circle cx="7.5" cy="18" r="2" stroke="#ea580c" stroke-width="2"/><circle cx="16.5" cy="18" r="2" stroke="#ea580c" stroke-width="2"/><path d="M3 14h18M7 10V7M17 10V7M10 7h4" stroke="#ea580c" stroke-width="1.5"/></svg></div>
+        <div class="sl-info"><div class="sl-label">Vehicle mileage</div><input type="range" min="8" max="40" value="18" step="1" id="mileSlider" oninput="calcFuel()" style="display:block;width:100%;"></div>
+        <div class="sl-val" id="mileVal">18 km/l</div>
+      </div>
+      <div class="sl-row">
+        <div class="sl-icon" style="background:#fef3c7;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2v6M12 16v6M4.93 4.93l4.24 4.24M14.83 14.83l4.24 4.24M2 12h6M16 12h6M4.93 19.07l4.24-4.24M14.83 9.17l4.24-4.24" stroke="#d97706" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="sl-info"><div class="sl-label">Petrol price (₹/litre)</div><input type="range" min="85" max="120" value="102" step="1" id="fuelSlider" oninput="calcFuel()" style="display:block;width:100%;"></div>
+        <div class="sl-val" id="fuelVal">₹102/L</div>
+      </div>
+    </div>
+    <div class="waypoints">
+      <div class="wp-hdr">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#FF6B35" stroke-width="2"/><path d="M12 8v4l3 3" stroke="#FF6B35" stroke-width="2" stroke-linecap="round"/></svg>
+        3 spots along your route
+      </div>
+      <div class="wp-row">
+        <img class="wp-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Yadagirigutta_temple.jpg/100px-Yadagirigutta_temple.jpg" alt="Yadagirigutta" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="wp-img-ph" style="display:none;background:#eff6ff;">⛪</div>
+        <div class="wp-info">
+          <div class="wp-name">Yadagirigutta Temple</div>
+          <div class="wp-dist">60 km from Jangaon · 2 km detour off NH163</div>
+          <div class="wp-det">⭐ 4.7 · Free entry · Open 24 hrs</div>
+        </div>
+        <button class="wp-add-btn">+ Add</button>
+      </div>
+      <div class="wp-row">
+        <img class="wp-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Bhongir_fort.jpg/100px-Bhongir_fort.jpg" alt="Bhongir Fort" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="wp-img-ph" style="display:none;background:#fdf4ff;">🏯</div>
+        <div class="wp-info">
+          <div class="wp-name">Bhongir Fort</div>
+          <div class="wp-dist">82 km from Jangaon · On NH163 route</div>
+          <div class="wp-det">⭐ 4.4 · ₹10 entry · Open 6 AM–6 PM</div>
+        </div>
+        <button class="wp-add-btn">+ Add</button>
+      </div>
+      <div class="wp-row">
+        <div class="wp-img-ph" style="background:#f0fdf4;">🌄</div>
+        <div class="wp-info">
+          <div class="wp-name">Raigiri Eco Park</div>
+          <div class="wp-dist">95 km from Jangaon · 4 km detour</div>
+          <div class="wp-det">⭐ 4.2 · ₹20 entry · Open 7 AM–7 PM</div>
+        </div>
+        <button class="wp-add-btn">+ Add</button>
+      </div>
+    </div>
+    <div style="height:12px;"></div>
+  </div>
+  <div class="bnav">
+    <div class="bni" onclick="showScr('home',null)"><svg viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#b0b8cc" stroke-width="2"/><path d="M9 22V12h6v10" stroke="#b0b8cc" stroke-width="2"/></svg><span>Home</span></div>
+    <div class="bni" onclick="showScr('itin',null)"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" stroke="#b0b8cc" stroke-width="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke="#b0b8cc" stroke-width="2" stroke-linecap="round"/></svg><span>Itinerary</span></div>
+    <div class="bni on"><svg viewBox="0 0 24 24" fill="none"><circle cx="5" cy="6" r="2" stroke="#FF6B35" stroke-width="2"/><circle cx="19" cy="18" r="2" stroke="#FF6B35" stroke-width="2"/><path d="M7 6h5a3 3 0 0 1 3 3v6a3 3 0 0 0 3 3" stroke="#FF6B35" stroke-width="2"/></svg><span>Route</span></div>
+    <div class="bni" onclick="showScr('cost',null)"><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" stroke="#b0b8cc" stroke-width="2"/><path d="M2 10h20" stroke="#b0b8cc" stroke-width="2"/></svg><span>Costs</span></div>
+    <div class="bni"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#b0b8cc" stroke-width="2"/><path d="M5 20a7 7 0 0 1 14 0" stroke="#b0b8cc" stroke-width="2" stroke-linecap="round"/></svg><span>Profile</span></div>
+  </div>
+</div>
+
+<div class="scr" id="cost">
+  <div class="sbar"><span class="sbar-time">9:41</span><div class="sbar-icons"><div class="si"></div><div class="sbatt"></div></div></div>
+  <div class="scroll">
+    <div style="padding:16px 16px 0;display:flex;align-items:center;justify-content:space-between;">
+      <div><div style="font-size:20px;font-weight:800;color:#1a1a2e;letter-spacing:-.4px;">Cost Estimator</div><div style="font-size:11px;color:#9aa0b0;margin-top:2px;">Hyderabad · 3 days · 1 person</div></div>
+      <span style="background:#fff0eb;color:#FF6B35;font-size:11px;font-weight:700;padding:6px 12px;border-radius:10px;cursor:pointer;">Share PDF</span>
+    </div>
+    <div class="budget-hero">
+      <div class="bh-lbl">Total Estimated Budget</div>
+      <div class="bh-amt">₹ 4,850</div>
+      <div class="bh-sub">Per person · excluding flight</div>
+      <div class="bh-bar">
+        <div class="bb" style="flex:3.2;background:#FF6B35;"></div>
+        <div class="bb" style="flex:1.2;background:#7c3aed;"></div>
+        <div class="bb" style="flex:1.8;background:#2563eb;"></div>
+        <div class="bb" style="flex:1.2;background:#16a34a;"></div>
+        <div class="bb" style="flex:.6;background:#d97706;"></div>
+      </div>
+      <div class="bh-legend">
+        <div class="bl-item"><div class="bl-dot" style="background:#FF6B35;"></div>Food</div>
+        <div class="bl-item"><div class="bl-dot" style="background:#7c3aed;"></div>Tickets</div>
+        <div class="bl-item"><div class="bl-dot" style="background:#2563eb;"></div>Transport</div>
+        <div class="bl-item"><div class="bl-dot" style="background:#16a34a;"></div>Hotel</div>
+        <div class="bl-item"><div class="bl-dot" style="background:#d97706;"></div>Misc</div>
+      </div>
+    </div>
+    <div class="alert-card">
+      <div class="alert-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke="#dc2626" stroke-width="2"/><line x1="12" y1="9" x2="12" y2="13" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="#dc2626"/></svg></div>
+      <div><div class="alert-title">Scam Alert — Know Official Prices</div><div class="alert-text">Charminar entry is ₹25 for Indians. Touts charge ₹200+. Always buy from ASI counter only. Golconda Fort: ₹35 official. Never pay touts at the gate.</div></div>
+    </div>
+    <div class="cost-list">
+      <div class="cost-item">
+        <div class="cost-ico" style="background:#fff7ed;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 8h1a4 4 0 0 1 0 8h-1" stroke="#ea580c" stroke-width="2" stroke-linecap="round"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" stroke="#ea580c" stroke-width="2"/><path d="M6 1v3M10 1v3M14 1v3" stroke="#ea580c" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="cost-info"><div class="cost-cat">Food & Drinks</div><div class="cost-det">3 meals/day × 3 days</div></div>
+        <div class="cost-amt">₹ 1,600</div>
+      </div>
+      <div class="cost-item">
+        <div class="cost-ico" style="background:#f5f3ff;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="10" width="18" height="12" rx="2" stroke="#7c3aed" stroke-width="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3" stroke="#7c3aed" stroke-width="2"/></svg></div>
+        <div class="cost-info"><div class="cost-cat">Entry Tickets</div><div class="cost-det">5 monuments · official ASI prices</div></div>
+        <div class="cost-amt">₹ 320</div>
+      </div>
+      <div class="cost-item">
+        <div class="cost-ico" style="background:#eff6ff;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="10" width="18" height="8" rx="2" stroke="#2563eb" stroke-width="2"/><circle cx="7.5" cy="18" r="2" stroke="#2563eb" stroke-width="2"/><circle cx="16.5" cy="18" r="2" stroke="#2563eb" stroke-width="2"/><path d="M3 14h18" stroke="#2563eb" stroke-width="1.5"/></svg></div>
+        <div class="cost-info"><div class="cost-cat">Fuel & Transport</div><div class="cost-det">127 km road + local autos (est.)</div></div>
+        <div class="cost-amt">₹ 1,080</div>
+      </div>
+      <div class="cost-item">
+        <div class="cost-ico" style="background:#f0fdf4;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#16a34a" stroke-width="2"/><rect x="9" y="13" width="6" height="8" rx="1" stroke="#16a34a" stroke-width="1.5"/></svg></div>
+        <div class="cost-info"><div class="cost-cat">Accommodation</div><div class="cost-det">2 nights · budget hotel ~₹600/night</div></div>
+        <div class="cost-amt">₹ 1,200</div>
+      </div>
+      <div class="cost-item">
+        <div class="cost-ico" style="background:#fefce8;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#d97706" stroke-width="2"/><path d="M12 8v4l3 3" stroke="#d97706" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="cost-info"><div class="cost-cat">Activities & Misc</div><div class="cost-det">Boat ride, shopping, tips</div></div>
+        <div class="cost-amt">₹ 650</div>
+      </div>
+    </div>
+    <div style="padding:12px 16px 20px;">
+      <button style="width:100%;padding:15px;border-radius:16px;background:#FF6B35;color:#fff;font-size:14px;font-weight:800;border:none;cursor:pointer;" onclick="sendPrompt('Generate a complete detailed cost breakdown PDF for my Hyderabad 3-day trip with Triply')">Export Full Cost Report ↗</button>
+    </div>
+  </div>
+  <div class="bnav">
+    <div class="bni" onclick="showScr('home',null)"><svg viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#b0b8cc" stroke-width="2"/><path d="M9 22V12h6v10" stroke="#b0b8cc" stroke-width="2"/></svg><span>Home</span></div>
+    <div class="bni" onclick="showScr('itin',null)"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" stroke="#b0b8cc" stroke-width="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke="#b0b8cc" stroke-width="2" stroke-linecap="round"/></svg><span>Itinerary</span></div>
+    <div class="bni" onclick="showScr('route',null)"><svg viewBox="0 0 24 24" fill="none"><circle cx="5" cy="6" r="2" stroke="#b0b8cc" stroke-width="2"/><circle cx="19" cy="18" r="2" stroke="#b0b8cc" stroke-width="2"/><path d="M7 6h5a3 3 0 0 1 3 3v6a3 3 0 0 0 3 3" stroke="#b0b8cc" stroke-width="2"/></svg><span>Route</span></div>
+    <div class="bni on"><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="2" stroke="#FF6B35" stroke-width="2"/><path d="M2 10h20" stroke="#FF6B35" stroke-width="2"/><circle cx="7" cy="15" r="1.5" stroke="#FF6B35" stroke-width="1.5"/></svg><span>Costs</span></div>
+    <div class="bni"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#b0b8cc" stroke-width="2"/><path d="M5 20a7 7 0 0 1 14 0" stroke="#b0b8cc" stroke-width="2" stroke-linecap="round"/></svg><span>Profile</span></div>
+  </div>
+</div>
+
+</div>
+</div>
+<script>
+function showScr(id,tabEl){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  if(tabEl){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+    tabEl.classList.add('on');
+  }
+}
+function calcFuel(){
+  const dist=127.4,mile=parseInt(document.getElementById('mileSlider').value),price=parseInt(document.getElementById('fuelSlider').value);
+  const litres=dist/mile,cost=litres*price;
+  document.getElementById('mileVal').textContent=mile+' km/l';
+  document.getElementById('fuelVal').textContent='₹'+price+'/L';
+  document.getElementById('rv-litres').textContent=litres.toFixed(1)+' L';
+  document.getElementById('rv-cost').textContent='₹'+Math.round(cost);
+}
+</script>
